@@ -1,6 +1,76 @@
 import React, { useState } from "react";
 import "./todoDesign.css";
 
+/** 
+ * AddTodoForm modal based on Figma "ADD TODO"
+ * PUBLIC_INTERFACE
+ */
+function AddTodoForm({ open, onClose, onSubmit }) {
+  // manage local form state
+  const [title, setTitle] = useState("");
+  const [detail, setDetail] = useState("");
+
+  if (!open) return null;
+
+  return (
+    <div className="modal-bg">
+      <div className="add-todo-modal">
+        <div className="add-todo-modal-statusbar"></div>
+        <header className="add-todo-modal-appbar">
+          <button
+            onClick={onClose}
+            className="add-todo-back-btn"
+            aria-label="Back"
+            tabIndex={0}
+          >
+            <svg height={24} width={30} viewBox="0 0 30 22">
+              <polyline points="20,3 8,11 20,19" fill="none" stroke="#fff" strokeWidth="3.3" strokeLinecap="round" />
+            </svg>
+          </button>
+          <span className="add-todo-title">Add Task</span>
+        </header>
+        <form
+          className="add-todo-form"
+          onSubmit={e => {
+            e.preventDefault();
+            if (title) {
+              onSubmit(title, detail);
+              setTitle("");
+              setDetail("");
+            }
+          }}
+        >
+          <label className="input-label" htmlFor="todo-title">Title</label>
+          <input
+            id="todo-title"
+            className="add-todo-input"
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            placeholder="Enter todo title"
+            required
+            autoFocus
+          />
+          <div className="figma-underline"></div>
+
+          <label className="input-label" htmlFor="todo-detail">Detail</label>
+          <input
+            id="todo-detail"
+            className="add-todo-input"
+            value={detail}
+            onChange={e => setDetail(e.target.value)}
+            placeholder="Detail (optional)"
+            style={{marginBottom:"16px"}}
+          />
+          <div className="figma-underline"></div>
+
+          <button type="submit" className="add-btn-main">
+            ADD
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
 // Figma main design image for developer overlay accuracy test
 const FIGMA_IMAGE_URL = "https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/bf55dd19-9dba-4820-8996-632019df5cc8";
 
@@ -129,6 +199,9 @@ function App() {
   const [tab, setTab] = useState("all"); // "all" or "completed"
   const [showFigma, setShowFigma] = useState(false);
 
+  // Modal for Add-Todo
+  const [showAddModal, setShowAddModal] = useState(false);
+
   // Filter todos for completed tab
   const filteredTodos = tab === "all" ? todos : todos.filter(t => t.completed);
 
@@ -139,9 +212,13 @@ function App() {
     ));
   };
 
-  // Simulate add
-  const handleAdd = () => {
-    window.alert("Add New Todo (functionality not implemented)");
+  // Modal open
+  const handleAdd = () => setShowAddModal(true);
+
+  // Modal submit
+  const handleAddSubmit = (title, detail) => {
+    setTodos(prev => [{title, desc: detail, completed: false}, ...prev]);
+    setShowAddModal(false);
   };
 
   return (
@@ -193,6 +270,11 @@ function App() {
       <TodosList todos={filteredTodos} onToggle={handleToggle} />
       <FloatingAddButton onAdd={handleAdd} />
       <BottomNav currentTab={tab} onTabChange={setTab} />
+      <AddTodoForm
+        open={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onSubmit={handleAddSubmit}
+      />
     </div>
   );
 }
