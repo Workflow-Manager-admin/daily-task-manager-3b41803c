@@ -71,8 +71,11 @@ function AddTodoForm({ open, onClose, onSubmit }) {
     </div>
   );
 }
-// Figma main design image for developer overlay accuracy test
-const FIGMA_IMAGE_URL = "https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/bf55dd19-9dba-4820-8996-632019df5cc8";
+/**
+ * Main Figma Add Todo modal background image for pixel overlay
+ * (corresponds to node 9:739 for Add Todo component)
+ */
+const FIGMA_IMAGE_URL = "https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/46c29bb3-62a8-4033-bd97-ef6a17a52944";
 
 /** 
  * AppBar component for the top bar
