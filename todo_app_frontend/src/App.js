@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import "./todoDesign.css";
+
+// Figma main design image for developer overlay accuracy test
+const FIGMA_IMAGE_URL = "https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/bf55dd19-9dba-4820-8996-632019df5cc8";
 
 /** 
  * AppBar component for the top bar
@@ -110,17 +113,21 @@ function TodosList({ todos, onToggle }) {
   );
 }
 
-// PUBLIC_INTERFACE
+/**
+ * PUBLIC_INTERFACE
+ * Main App for the Todo frontend. Now includes (dev only) a Figma screenshot overlay toggle for pixel QA.
+ */
 function App() {
   // Static sample todos (static for visual only)
-  const [todos, setTodos] = React.useState([
+  const [todos, setTodos] = useState([
     { title: "Go for a run", desc: "5km in the park, morning", completed: false },
     { title: "Daily Standup", desc: "Zoom at 9:30 AM", completed: false },
     { title: "Write blog post", desc: "Draft new article", completed: true },
     { title: "Buy groceries", desc: "Eggs, bread, milk", completed: false },
     { title: "Read book", desc: "Finish 1 chapter", completed: false },
   ]);
-  const [tab, setTab] = React.useState("all"); // "all" or "completed"
+  const [tab, setTab] = useState("all"); // "all" or "completed"
+  const [showFigma, setShowFigma] = useState(false);
 
   // Filter todos for completed tab
   const filteredTodos = tab === "all" ? todos : todos.filter(t => t.completed);
@@ -137,9 +144,50 @@ function App() {
     window.alert("Add New Todo (functionality not implemented)");
   };
 
-  // Filling background frame and fixed layout
   return (
     <div className="todo-app-bg">
+      {/* Dev: toggle Figma overlay to check pixel-accuracy */}
+      <button
+        className="figma-toggle-btn"
+        onClick={() => setShowFigma(f => !f)}
+        tabIndex={-1}
+        style={{
+          position: "absolute",
+          top: 10,
+          left: 10,
+          zIndex: 200,
+          background: "#fff",
+          color: "#9395d3",
+          border: "1.5px solid #9395d3",
+          fontWeight: 700,
+          borderRadius: "8px",
+          padding: "8px 18px",
+          opacity: 0.8,
+          cursor: "pointer",
+          fontSize: "13px"
+        }}
+        title="Toggle Figma Design Overlay"
+      >
+        {showFigma ? "Hide Figma" : "Show Figma Design"}
+      </button>
+      {showFigma && (
+        <img
+          src={FIGMA_IMAGE_URL}
+          alt="Figma Design Overlay"
+          style={{
+            position: "absolute",
+            left: 0,
+            top: 0,
+            width: 414,
+            height: 896,
+            zIndex: 100,
+            opacity: 0.52,
+            pointerEvents: "none",
+            borderRadius: 24
+          }}
+          draggable={false}
+        />
+      )}
       <div className="status-bar"></div>
       <AppBar />
       <TodosList todos={filteredTodos} onToggle={handleToggle} />
